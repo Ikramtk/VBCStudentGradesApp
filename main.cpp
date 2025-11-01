@@ -1,8 +1,10 @@
-#include <iostream>
-#include <vector>
+#include <iostream> 
 #include <iomanip>
+#include <vector>
+#include <string>
+#include <algorithm>
 #include <fstream>
-#include <random>
+
 #include "Person.h"
 
 using namespace std;
@@ -11,29 +13,25 @@ void printHeader() {
     cout << left << setw(12) << "Name"
          << setw(14) << "Surname"
          << setw(14) << "Final (Avg.)"
-         << setw(14) << "Final (Med.)" << "\n";
-    cout << "------------------------------------------------------\n";
+         << setw(14) << "Final (Med.)" << endl;
+    cout << string(54, '-') << endl;
 }
 
 int main() {
+    vector<Person> students;
     int choice;
+
     cout << "Data source?\n";
     cout << "1) Manual input\n";
     cout << "2) Random generate\n";
     cout << "3) Read from Students.txt\n";
     cout << "Choose [1/2/3]: ";
     cin >> choice;
-
-    vector<Person> students;
-
-    if (choice == 1) {
-        // Manual input
+        if (choice == 1) {
         int n;
         cout << "Enter number of students: ";
         cin >> n;
-
-        for (int i = 0; i < n; ++i) {
-            cout << "\n--- Student " << i + 1 << " ---\n";
+        for (int i = 0; i < n; i++) {
             Person p;
             cin >> p;
             students.push_back(p);
@@ -45,29 +43,22 @@ int main() {
                  << setw(14) << s.surname()
                  << setw(14) << fixed << setprecision(2) << s.finalByAverage()
                  << setw(14) << fixed << setprecision(2) << s.finalByMedian()
-                 << '\n';
+                 << endl;
         }
-
-        system("pause");
-    }
+}
 
     else if (choice == 2) {
-        // Random generate
-        int n;
-        cout << "Enter number of students to generate: ";
+                int n;
+        cout << "Enter number of students: ";
         cin >> n;
 
-        random_device rd;
-        mt19937 gen(rd());
-        uniform_int_distribution<> dist(0, 10);
-
-        for (int i = 0; i < n; ++i) {
+        for (int i = 0; i < n; i++) {
             string name = "Name" + to_string(i + 1);
             string surname = "Surname" + to_string(i + 1);
             vector<int> hw(5);
-            for (int& h : hw) h = dist(gen);
-            int exam = dist(gen);
-
+            for (int j = 0; j < 5; j++)
+                hw[j] = rand() % 10 + 1;
+            int exam = rand() % 10 + 1;
             students.emplace_back(name, surname, hw, exam);
         }
 
@@ -77,38 +68,39 @@ int main() {
                  << setw(14) << s.surname()
                  << setw(14) << fixed << setprecision(2) << s.finalByAverage()
                  << setw(14) << fixed << setprecision(2) << s.finalByMedian()
-                 << '\n';
+                 << endl;
         }
-
-        system("pause");
-    }
+}
 
     else if (choice == 3) {
-        // Read from file
-        ifstream input("Students.txt");
-        if (!input.is_open()) {
-            cerr << "❌ Error: Cannot open Students.txt! Make sure it’s in the same folder.\n";
-            system("pause");
+        ifstream file("Students.txt");
+        if (!file) {
+            cerr << "Error: Cannot open Students.txt file.\n";
             return 1;
         }
 
-        vector<Person> studentsFromFile;
         string name, surname;
-        vector<int> hw(5);
-        int exam;
+        int hw1, hw2, hw3, hw4, hw5, exam;
+        vector<Person> studentsFromFile;
 
-        string headerLine;
-        getline(input, headerLine); // skip header line
+    
+        string header;
+        getline(file, header);
 
-        while (input >> name >> surname >> hw[0] >> hw[1] >> hw[2] >> hw[3] >> hw[4] >> exam) {
+        while (file >> name >> surname >> hw1 >> hw2 >> hw3 >> hw4 >> hw5 >> exam) {
+            vector<int> hw = {hw1, hw2, hw3, hw4, hw5};
             studentsFromFile.emplace_back(name, surname, hw, exam);
         }
 
-        if (studentsFromFile.empty()) {
-            cout << "⚠️ No student data found in Students.txt.\n";
-            system("pause");
-            return 0;
-        }
+        file.close();
+
+        // Sort by surname then name
+        sort(studentsFromFile.begin(), studentsFromFile.end(),
+             [](const Person& a, const Person& b) {
+                 if (a.surname() == b.surname())
+                     return a.name() < b.name();
+                 return a.surname() < b.surname();
+             });
 
         printHeader();
         for (const auto& s : studentsFromFile) {
@@ -116,16 +108,16 @@ int main() {
                  << setw(14) << s.surname()
                  << setw(14) << fixed << setprecision(2) << s.finalByAverage()
                  << setw(14) << fixed << setprecision(2) << s.finalByMedian()
-                 << '\n';
+                 << endl;
         }
-
-        system("pause");
-    }
+  }
 
     else {
-        cout << "Invalid choice!\n";
-        system("pause");
+        cout << "Invalid choice.\n";
     }
 
+    cout << "Press any key to continue...";
+    cin.ignore();
+    cin.get();
     return 0;
 }
