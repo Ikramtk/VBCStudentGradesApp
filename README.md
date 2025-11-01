@@ -1,2 +1,2 @@
 # main
-Student grades calculation program using Rule of Three and Vectors
+Project for calculating student final grades based on homework and exam results.
