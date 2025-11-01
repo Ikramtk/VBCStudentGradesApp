@@ -5,15 +5,15 @@
             "name": "C++ Launch (g++)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/main.exe",
+            "program": "${workspaceFolder}\\VBCStudentGradesApp.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": true,
             "MIMode": "gdb",
-            "miDebuggerPath": "gdb",
-            "preLaunchTask": "C/C++: g++.exe build active file"
+            "miDebuggerPath": "C:\\Users\\user\\Downloads\\mingw64\\bin\\gdb.exe",
+            "preLaunchTask": "C/C++: g++.exe build project"
         }
     ]
 }
