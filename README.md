@@ -58,22 +58,7 @@ Container (1=vector, 2=list, 3=deque)
 ```
 ---
 
-## 📊 Example Output
-```
-Name       Surname       Final(Avg.)   Final(Med.)
-==================================================
-Adam       Brown              8.45         8.50
-Clara      Smith              6.12         5.90
-Daniel     White              4.89         5.10
+### Author
 
---- Performance (ms) ---
-Read:  210
-Sort:  380
-Split: 115
-Write:  90
-TOTAL: 795
-```
-
-Files created:
-- `students_result_passed.txt`
-- `students_result_failed.txt`
+Ikram Outaik
+Vilnius Business College — Programming and Internet Technologies
