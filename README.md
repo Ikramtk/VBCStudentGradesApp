@@ -1,27 +1,79 @@
-# Student Points Calculator — Release v0.2
+## 🎓 Student Points Calculator — Release v0.25
 
-This version extends v0.1 with:
-- Code refactoring into multiple translation units (`Student`, `FileIO`, `FileGenerator`, `ExceptionHelper`, `Timer`, `main`).
-- Exception handling for file I/O and generic failures.
-- Performance measurement: read, sort, split, write, total.
-- Random generation of four datasets: 10k, 100k, 1M, 10M (`NameN SurnameN` with random HW/Exam 1..10).
-- Sorting by Name/Surname, splitting into Passed (>=5.0) and Failed (<5.0).
-- Outputs two files: `students_result_passed.txt` and `students_result_failed.txt`.
+This version improves **v0.2** with better exception handling, user input validation, and cleaner code structure.
 
-## Build
+---
+
+## 🆕 What's New in v0.25
+- Added exception handling for:
+  - `std::invalid_argument`
+  - `std::out_of_range`
+  - `std::runtime_error`
+- Improved stability when user enters invalid input.
+- Enhanced performance measurement output.
+- Cleaned and organized project files.
+- Support measuring performance on three containers: std::vector, std::list, std::deque.
+
+
+---
+
+## ⚙️ Build Command
 ```bash
-g++ main.cpp Student.cpp FileIO.cpp FileGenerator.cpp -o VBCStudentGradesApp
+g++ main.cpp Student.cpp FileIO.cpp FileGenerator.cpp ExceptionHelper.cpp -o VBCStudentGradesApp
 ```
 
-## Run
-1) Generate datasets:
+---
+
+## ▶️ Run Instructions
+
+### 1️⃣ Generate Test Files
+Run the program and choose:
 ```
-./VBCStudentGradesApp
-# answer: 1
+Generate test files now? (1=Yes, 0=No): 1
 ```
-2) Analyze a dataset:
+
+➡️ This will create the test files:
 ```
-./VBCStudentGradesApp
-# answer: 0
-# choose file and method
+students1000.txt
+students10000.txt
+students100000.txt
+students1000000.txt
+students10000000.txt
 ```
+
+### 2️⃣ Analyze Dataset
+Run the program again and choose:
+```
+Generate test files now? (1=Yes, 0=No): 0
+```
+
+Then select:
+```
+Choose [1-5] → dataset to analyze
+Method (1=Average, 2=Median) → calculation method
+```
+Then select:
+```
+Container (1=vector, 2=list, 3=deque)
+```
+---
+
+## 📊 Example Output
+```
+Name       Surname       Final(Avg.)   Final(Med.)
+==================================================
+Adam       Brown              8.45         8.50
+Clara      Smith              6.12         5.90
+Daniel     White              4.89         5.10
+
+--- Performance (ms) ---
+Read:  210
+Sort:  380
+Split: 115
+Write:  90
+TOTAL: 795
+```
+
+Files created:
+- `students_result_passed.txt`
+- `students_result_failed.txt`

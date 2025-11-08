@@ -16,6 +16,6 @@ inline void printCodeInfo(const T& e) {
               << "- message: "  << c.message()          << "\n";
 }
 
-void processException();
+void processException();  
 
 #endif
