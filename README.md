@@ -11,16 +11,18 @@ This version extends v0.1 with:
 ## Build
 ```bash
 g++ main.cpp Student.cpp FileIO.cpp FileGenerator.cpp ExceptionHelper.cpp -o VBCStudentGradesApp```
-
+```
 ## Run
 1) Generate datasets:
 ```
 ./VBCStudentGradesApp
-# answer: 1
 ```
+# answer: 1
+
 2) Analyze a dataset:
 ```
 ./VBCStudentGradesApp
+```
 # answer: 0
 # choose file and method
 ```
