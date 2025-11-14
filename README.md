@@ -1,64 +1,139 @@
-## 🎓 Student Points Calculator — Release v0.25
+# Student Grades Calculator — Final Project (v1.0)
 
-This version improves **v0.2** with better exception handling, user input validation, and cleaner code structure.
-
----
-
-## 🆕 What's New in v0.25
-- Added exception handling for:
-  - `std::invalid_argument`
-  - `std::out_of_range`
-  - `std::runtime_error`
-- Improved stability when user enters invalid input.
-- Enhanced performance measurement output.
-- Cleaned and organized project files.
-- Support measuring performance on three containers: std::vector, std::list, std::deque.
-
+This repository contains the full implementation and evolution of the *Student Grades Calculator* project.  
+The goal of the project is to read student data, calculate final grades (average or median), sort students, and split them into "passed" and "failed" groups using different container types and strategies.
 
 ---
 
-## ⚙️ Build Command
-```bash
-g++ main.cpp Student.cpp FileIO.cpp FileGenerator.cpp ExceptionHelper.cpp -o VBCStudentGradesApp
-```
+## 📌 Releases Included
+
+### **🔹 v0.1 – Basic Version**
+- Reads student data from a file.
+- Calculates final grade using average or median.
+- Basic sorting using vector.
+- Writes passed/failed students to output files.
 
 ---
 
-## ▶️ Run Instructions
+### **🔹 v0.2 – Improved Performance**
+- Refactored code structure.
+- Added robust error handling.
+- Cleaner I/O operations.
+- Added initial measurement of read/sort/split/write.
 
-### 1️⃣ Generate Test Files
-Run the program and choose:
-```
-Generate test files now? (1=Yes, 0=No): 1
-```
-
-➡️ This will create the test files:
-```
-students1000.txt
-students10000.txt
-students100000.txt
-students1000000.txt
-students10000000.txt
-```
-
-### 2️⃣ Analyze Dataset
-Run the program again and choose:
-```
-Generate test files now? (1=Yes, 0=No): 0
-```
-
-Then select:
-```
-Choose [1-5] → dataset to analyze
-Method (1=Average, 2=Median) → calculation method
-```
-Then select:
-```
-Container (1=vector, 2=list, 3=deque)
-```
 ---
 
-### Author
+### **🔹 v0.25 – Container Performance Comparison**
+- Added support for:
+  - `std::vector`
+  - `std::list`
+  - `std::deque`
+- Compared sorting and splitting performance for all containers.
+- Implemented stable sorting for consistent outputs.
+- Prepared data files: 1k, 10k, 100k, 1M, 10M students.
 
-Ikram Outaik
-Vilnius Business College — Programming and Internet Technologies
+---
+
+### **🔹 v1.0 – Final Optimized Version**
+This is the final release of the project.  
+Changes included:
+
+#### ✔ Two splitting strategies implemented:
+1. **Strategy 1 (Copy strategy):**  
+   - Copies students into *two* new containers: `passed` and `failed`.  
+   - Keeps original container intact.  
+   - Easy but not memory efficient.
+
+2. **Strategy 2 (Move/Erase strategy):**  
+   - Moves failed students to a new container.  
+   - Removes them from the original container.  
+   - Only passed students remain.  
+   - More memory efficient but may be slower for some containers.
+
+#### ✔ Replaced manual loops with `<algorithm>` functions:
+- `std::copy_if`
+- `std::remove_if`
+- `std::stable_partition`
+- `std::sort`, `std::stable_sort`
+- Lambdas for grade filtering
+
+#### ✔ Performance measurement improved:
+- Read time
+- Sort time
+- Split time
+- Write time
+
+#### ✔ Added Makefile + CMakeLists.txt for full portability.
+
+---
+
+## 🚀 Usage Guide
+
+### **1. Generate test files (optional)**
+
+Run program → Enter 1 → Files are generated
+
+### **2. Choose dataset**
+
+1 = 1000 students
+2 = 10000 students
+3 = 100000 students
+4 = 1000000 students
+5 = 10000000 students
+
+### **3. Choose final grade method**
+
+1 = Average
+2 = Median
+
+### **4. Choose container**
+
+1 = vector
+2 = list
+3 = deque
+
+### **5. Choose strategy**
+
+1 = Strategy 1 (copy)
+2 = Strategy 2 (move/remove)
+
+### **Output Files**
+The program produces files such as:
+
+students_result_vector_s1_passed.txt
+students_result_vector_s1_failed.txt
+
+students_result_list_s2_passed.txt
+students_result_list_s2_failed.txt
+
+---
+
+## 🛠 Build Instructions
+
+### **Using Makefile (Linux/Mac)**
+
+make
+./VBCStudentGradesApp
+
+### **Using CMake (cross-platform)**
+
+mkdir build
+cd build
+cmake ..
+cmake –build .
+./VBCStudentGradesApp
+
+---
+
+## 📊 Performance Notes
+- `vector` usually fastest for sorting + strategy 1.
+- `list` performs slower due to non-contiguous memory, but efficient erasing.
+- `deque` performs close to vector depending on data size.
+- Strategy 2 is more memory efficient but may be slower on large datasets.
+
+---
+
+## 👩‍💻 Author
+Ikram Outaik  
+Vilnius Business College  
+Programming & Internet Technologies
