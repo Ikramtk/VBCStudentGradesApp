@@ -7,6 +7,7 @@ TARGET = StudentGradesApp
 
 all: $(TARGET)
 
+
 $(TARGET): $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJ)
 
