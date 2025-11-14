@@ -75,36 +75,36 @@ Run program → Enter 1 → Files are generated
 
 ### **2. Choose dataset**
 
-1 = 1000 students.
-2 = 10000 students.
-3 = 100000 students.
-4 = 1000000 students.
-5 = 10000000 students.
+1 = 1000 students<br>
+2 = 10000 students<br>
+3 = 100000 students<br>
+4 = 1000000 students<br>
+5 = 10000000 students<br>
 
 ### **3. Choose final grade method**
 
-1 = Average.
-2 = Median.
+1 = Average<br>
+2 = Median<br>
 
 ### **4. Choose container**
 
-1 = vector.
-2 = list.
-3 = .
+1 = vector<br>
+2 = list<br>
+3 = deque<br>
 
 ### **5. Choose strategy**
 
-1 = Strategy 1 (copy).
-2 = Strategy 2 (move/remove).
+1 = Strategy 1 (copy)<br>
+2 = Strategy 2 (move/remove)<br>
 
 ### **Output Files**
 The program produces files such as:
 
-students_result_vector_s1_passed.txt.
-students_result_vector_s1_failed.txt.
+students_result_vector_s1_passed.txt<br>
+students_result_vector_s1_failed.txt<br>
 
-students_result_list_s2_passed.txt.
-students_result_list_s2_failed.txt.
+students_result_list_s2_passed.txt<br>
+students_result_list_s2_failed.txt<br>
 
 ---
 
@@ -117,11 +117,11 @@ make
 
 ### **Using CMake (cross-platform)**
 
-mkdir build .
-cd build .
-cmake ..
-cmake –build .
-./VBCStudentGradesApp
+mkdir build <br>
+cd build <br>
+cmake ..<br>
+cmake –build <br>
+./VBCStudentGradesApp<br>
 
 ---
 
