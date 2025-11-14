@@ -1,19 +1,140 @@
-# Student Points Calculator
+# Student Grades Calculator — Final Project (v1.0)
 
-This project calculates students' final grades based on their homework and exam scores.
-
-### 🔸 Formula:
-**Final Grade = 0.4 × Average(Homeworks) + 0.6 × Exam**
-
-Later versions will also allow calculating using the **median** instead of the average.
+This repository contains the full implementation and evolution of the *Student Grades Calculator* project.  
+The goal of the project is to read student data, calculate final grades (average or median), sort students, and split them into "passed" and "failed" groups using different container types and strategies.
 
 ---
 
-### 🔸 Planned Features:
-- Class `Person` to store name, surname, and grades.
-- Rule of Three implementation (constructor, copy constructor, destructor).
-- Overloaded input/output operators.
-- Calculation by **average** and **median**.
-- Random data generation.
-- Reading data from a file `Students.txt`.
-- Formatted table output sorted by name or surname.
+## 📌 Releases Included
+
+### **🔹 v0.1 – Basic Version**
+- Reads student data from a file.
+- Calculates final grade using average or median.
+- Basic sorting using vector.
+- Writes passed/failed students to output files.
+
+---
+
+### **🔹 v0.2 – Improved Performance**
+- Refactored code structure.
+- Added robust error handling.
+- Cleaner I/O operations.
+- Added initial measurement of read/sort/split/write.
+
+---
+
+### **🔹 v0.25 – Container Performance Comparison**
+- Added support for:
+  - `std::vector`
+  - `std::list`
+  - `std::deque`
+- Compared sorting and splitting performance for all containers.
+- Implemented stable sorting for consistent outputs.
+- Prepared data files: 1k, 10k, 100k, 1M, 10M students.
+
+---
+
+### **🔹 v1.0 – Final Optimized Version**
+This is the final release of the project.  
+Changes included:
+
+#### ✔ Two splitting strategies implemented:
+1. **Strategy 1 (Copy strategy):**  
+   - Copies students into *two* new containers: `passed` and `failed`.  
+   - Keeps original container intact.  
+   - Easy but not memory efficient.
+
+2. **Strategy 2 (Move/Erase strategy):**  
+   - Moves failed students to a new container.  
+   - Removes them from the original container.  
+   - Only passed students remain.  
+   - More memory efficient but may be slower for some containers.
+
+#### ✔ Replaced manual loops with `<algorithm>` functions:
+- `std::copy_if`
+- `std::remove_if`
+- `std::stable_partition`
+- `std::sort`, `std::stable_sort`
+- Lambdas for grade filtering
+
+#### ✔ Performance measurement improved:
+- Read time
+- Sort time
+- Split time
+- Write time
+
+#### ✔ Added Makefile + CMakeLists.txt for full portability.
+
+---
+
+## 🚀 Usage Guide
+
+### **1. Generate test files (optional)**
+
+Run program → Enter 1 → Files are generated
+
+### **2. Choose dataset**
+
+1 = 1000 students<br>
+2 = 10000 students<br>
+3 = 100000 students<br>
+4 = 1000000 students<br>
+5 = 10000000 students<br>
+
+### **3. Choose final grade method**
+
+1 = Average<br>
+2 = Median<br>
+
+### **4. Choose container**
+
+1 = vector<br>
+2 = list<br>
+3 = deque<br>
+
+### **5. Choose strategy**
+
+1 = Strategy 1 (copy)<br>
+2 = Strategy 2 (move/remove)<br>
+
+### **Output Files**
+The program produces files such as:
+
+students_result_vector_s1_passed.txt<br>
+students_result_vector_s1_failed.txt<br>
+
+students_result_list_s2_passed.txt<br>
+students_result_list_s2_failed.txt<br>
+
+---
+
+## 🛠 Build Instructions
+
+### **Using Makefile (Linux/Mac)**
+
+make
+./VBCStudentGradesApp
+
+### **Using CMake (cross-platform)**
+
+mkdir build <br>
+cd build <br>
+cmake ..<br>
+cmake –build <br>
+./VBCStudentGradesApp<br>
+
+---
+
+## 📊 Performance Notes
+- `vector` usually fastest for sorting + strategy 1.
+- `list` performs slower due to non-contiguous memory, but efficient erasing.
+- `deque` performs close to vector depending on data size.
+- Strategy 2 is more memory efficient but may be slower on large datasets.
+
+---
+
+## 👩‍💻 Author
+Ikram Outaik  
+Vilnius Business College  
+Programming & Internet Technologies
+

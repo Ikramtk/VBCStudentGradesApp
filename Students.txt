@@ -1,0 +1,8 @@
+Name        Surname    HW1   HW2   HW3   HW4   HW5   Exam
+Nissrine    Outaik       8     9    10     6    10      9
+Badil        Waled       7    10     8     5     4      6
+Doua         Sahar       5     6     7     8     9      7
+Basma         Rada       8     9    10     6    10      9
+Kaoutar      Mounim      6    10     8     6     4      10
+Reda          Fiky       5     8     7     8     8      7
+Sulaiman     Turki       5     9     7     9     6      7
