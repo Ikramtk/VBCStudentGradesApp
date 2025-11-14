@@ -16,4 +16,4 @@ Later versions will also allow calculating using the **median** instead of the a
 - Calculation by **average** and **median**.
 - Random data generation.
 - Reading data from a file `Students.txt`.
-- Formatted table output sorted by name or surname. 
+- Formatted table output sorted by name or surname.
