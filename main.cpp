@@ -12,21 +12,33 @@
 #include "Timer.h"
 #include "ExceptionHelper.h"
 
+// Table header
 static void printHeader() {
     std::cout << std::left << std::setw(12) << "Name"
               << std::setw(14) << "Surname"
               << std::right << std::setw(12) << "Final (Avg.)"
-              << std::right << std::setw(12) << "Final (Med.)" << "\n";
-    std::cout << std::string(50, '=') << "\n";
+              << std::right << std::setw(12) << "Final (Med.)" << "\n"
+              << std::string(50, '=') << "\n";
+}
+
+// Select final grade (avg/median)
+static double finalPoints(const Student& s, int method) {
+    return (method == 2) ? s.finalByMedian() : s.finalByAverage();
 }
 
 int main() {
     try {
         std::cout << "Generate test files now? (1=Yes, 0=No): ";
-        int gen; 
-        if (!(std::cin >> gen)) throw std::invalid_argument("Input must be numeric (1/0).");
-        if (gen == 1) { generateFiles(); std::cout << "Files generated.\n"; return 0; }
+        int gen;
+        if (!(std::cin >> gen)) throw std::invalid_argument("Invalid input.");
 
+        if (gen == 1) {
+            generateFiles();
+            std::cout << "Test files generated.\n";
+            return 0;
+        }
+
+        // Choose file
         std::cout << "\nChoose dataset:\n"
                   << " 1) students1000.txt\n"
                   << " 2) students10000.txt\n"
@@ -34,8 +46,10 @@ int main() {
                   << " 4) students1000000.txt\n"
                   << " 5) students10000000.txt\n"
                   << "Enter choice [1-5]: ";
-        int ch; 
-        if (!(std::cin >> ch) || ch < 1 || ch > 5) throw std::out_of_range("Choice must be 1..5.");
+
+        int ch;
+        std::cin >> ch;
+        if (ch < 1 || ch > 5) throw std::out_of_range("Choice must be 1..5");
 
         std::string file = (ch==1) ? "students1000.txt" :
                            (ch==2) ? "students10000.txt" :
@@ -43,111 +57,208 @@ int main() {
                            (ch==4) ? "students1000000.txt" : "students10000000.txt";
 
         std::cout << "Method (1=Average, 2=Median): ";
-        int method; 
-        if (!(std::cin >> method) || (method != 1 && method != 2))
-            throw std::invalid_argument("Method must be 1 or 2.");
+        int method;
+        std::cin >> method;
 
-        std::cout << "Container (1=vector, 2=list, 3=deque): ";
+        std::cout << "Choose container (1=vector, 2=list, 3=deque): ";
         int ctype;
-        if (!(std::cin >> ctype) || ctype < 1 || ctype > 3)
-            throw std::out_of_range("Container must be 1..3.");
+        std::cin >> ctype;
 
-        // Read as vector first (source of truth)
-        auto t1 = clock_type::now();
-        std::vector<Student> v = readStudentsFromFile(file);
-        auto t2 = clock_type::now();
+        std::cout << "Choose strategy (1=copy, 2=move/remove): ";
+        int strategy;
+        std::cin >> strategy;
 
-        long long read_ms = ms(t1, t2);
+        // Read data
+        auto t_read1 = clock_type::now();
+        std::vector<Student> base = readStudentsFromFile(file);
+        auto t_read2 = clock_type::now();
+
+        long long read_ms = ms(t_read1, t_read2);
         long long sort_ms = 0, split_ms = 0, write_ms = 0;
 
+        auto isPassed = [method](const Student& s) {
+            return finalPoints(s, method) >= 5.0;
+        };
+
+        // =====================================================================
+        // VECTOR
+        // =====================================================================
         if (ctype == 1) {
-            // vector
-            std::vector<Student> students = v;
+            std::cout << "\n[Container: vector]\n";
+            std::vector<Student> students = base;
+
+            // Sort
             auto s1 = clock_type::now();
-            std::stable_sort(students.begin(), students.end(), [](const Student& a, const Student& b){
-                return (a.name()==b.name()) ? (a.surname()<b.surname()) : (a.name()<b.name());
-            });
+            std::stable_sort(students.begin(), students.end(),
+                [](const Student& a, const Student& b) {
+                    return (a.name()==b.name()) ? (a.surname()<b.surname())
+                                                : (a.name()<b.name());
+                });
             auto s2 = clock_type::now();
 
             std::vector<Student> passed, failed;
-            passed.reserve(students.size());
-            failed.reserve(students.size());
-            for (const auto& s : students) {
-                double f = (method==2) ? s.finalByMedian() : s.finalByAverage();
-                (f>=5.0 ? passed : failed).push_back(s);
-            }
-            auto s3 = clock_type::now();
 
-            writeStudentsToFiles(passed, failed, "students_result_vector");
-            auto s4 = clock_type::now();
+            // STRATEGY 1 – COPY TO TWO CONTAINERS
+            if (strategy == 1) {
+                auto s3 = clock_type::now();
+
+                std::copy_if(students.begin(), students.end(),
+                             std::back_inserter(passed), isPassed);
+
+                std::copy_if(students.begin(), students.end(),
+                             std::back_inserter(failed),
+                             [isPassed](const Student& s){ return !isPassed(s); });
+
+                auto s4 = clock_type::now();
+                split_ms = ms(s3, s4);
+            }
+
+            // STRATEGY 2 – MOVE/ERASE (MORE MEMORY EFFICIENT)
+            else {
+                auto s3 = clock_type::now();
+
+                auto middle = std::stable_partition(students.begin(), students.end(), isPassed);
+                failed.assign(middle, students.end());
+                students.erase(middle, students.end());
+                passed = students;
+
+                auto s4 = clock_type::now();
+                split_ms = ms(s3, s4);
+            }
+
+            // Write output
+            auto w1 = clock_type::now();
+            std::string pref = (strategy == 1)
+                ? "students_result_vector_s1"
+                : "students_result_vector_s2";
+            writeStudentsToFiles(passed, failed, pref);
+            auto w2 = clock_type::now();
 
             sort_ms  = ms(s1, s2);
-            split_ms = ms(s2, s3);
-            write_ms = ms(s3, s4);
+            write_ms = ms(w1, w2);
 
             printHeader();
-            for (int i=0; i<std::min<int>(10,(int)students.size()); ++i) std::cout << students[i] << "\n";
-            std::cout << "\n[Using std::vector]\n";
+            for (int i = 0; i < std::min(10, (int)passed.size()); i++)
+                std::cout << passed[i] << "\n";
+        }
 
-        } else if (ctype == 2) {
-            // list
-            std::list<Student> students(v.begin(), v.end());
+        // =====================================================================
+        // LIST
+        // =====================================================================
+        else if (ctype == 2) {
+            std::cout << "\n[Container: list]\n";
+
+            std::list<Student> students(base.begin(), base.end());
+
             auto s1 = clock_type::now();
             students.sort([](const Student& a, const Student& b){
-                return (a.name()==b.name()) ? (a.surname()<b.surname()) : (a.name()<b.name());
+                return (a.name()==b.name()) ? (a.surname()<b.surname())
+                                            : (a.name()<b.name());
             });
             auto s2 = clock_type::now();
 
             std::list<Student> passed, failed;
-            for (const auto& s : students) {
-                double f = (method==2) ? s.finalByMedian() : s.finalByAverage();
-                (f>=5.0 ? passed : failed).push_back(s);
-            }
-            auto s3 = clock_type::now();
 
+            if (strategy == 1) {
+                // copy
+                auto s3 = clock_type::now();
+
+                std::copy_if(students.begin(), students.end(),
+                             std::back_inserter(passed), isPassed);
+
+                std::copy_if(students.begin(), students.end(),
+                             std::back_inserter(failed),
+                             [isPassed](const Student& s){ return !isPassed(s); });
+
+                auto s4 = clock_type::now();
+                split_ms = ms(s3,s4);
+            }
+            else {
+                // move/remove
+                auto s3 = clock_type::now();
+                for (auto it = students.begin(); it != students.end();) {
+                    if (!isPassed(*it)) {
+                        failed.push_back(*it);
+                        it = students.erase(it);
+                    } else {
+                        ++it;
+                    }
+                }
+                passed = students;
+                auto s4 = clock_type::now();
+                split_ms = ms(s3,s4);
+            }
+
+            auto w1 = clock_type::now();
+            std::string pref = (strategy==1)
+                ? "students_result_list_s1"
+                : "students_result_list_s2";
             writeStudentsToFiles(
                 std::vector<Student>(passed.begin(), passed.end()),
                 std::vector<Student>(failed.begin(), failed.end()),
-                "students_result_list"
+                pref
             );
-            auto s4 = clock_type::now();
+            auto w2 = clock_type::now();
 
-            sort_ms  = ms(s1, s2);
-            split_ms = ms(s2, s3);
-            write_ms = ms(s3, s4);
+            sort_ms = ms(s1,s2);
+            write_ms = ms(w1,w2);
+        }
 
-            std::cout << "\n[Using std::list] (preview of first 10 after sort not printed for list)\n";
+        // =====================================================================
+        // DEQUE
+        // =====================================================================
+        else if (ctype == 3) {
+            std::cout << "\n[Container: deque]\n";
+            std::deque<Student> students(base.begin(), base.end());
 
-        } else {
-            // deque
-            std::deque<Student> students(v.begin(), v.end());
             auto s1 = clock_type::now();
-            std::sort(students.begin(), students.end(), [](const Student& a, const Student& b){
-                return (a.name()==b.name()) ? (a.surname()<b.surname()) : (a.name()<b.name());
-            });
+            std::sort(students.begin(), students.end(),
+                [](const Student& a, const Student& b){
+                    return (a.name()==b.name()) ? (a.surname()<b.surname())
+                                                : (a.name()<b.name());
+                });
             auto s2 = clock_type::now();
 
             std::deque<Student> passed, failed;
-            for (const auto& s : students) {
-                double f = (method==2) ? s.finalByMedian() : s.finalByAverage();
-                (f>=5.0 ? passed : failed).push_back(s);
+
+            if (strategy == 1) {
+                auto s3 = clock_type::now();
+                for (const auto& s : students)
+                    (isPassed(s) ? passed : failed).push_back(s);
+                auto s4 = clock_type::now();
+                split_ms = ms(s3,s4);
+            } else {
+                auto s3 = clock_type::now();
+                for (auto it = students.begin(); it != students.end();) {
+                    if (!isPassed(*it)) {
+                        failed.push_back(*it);
+                        it = students.erase(it);
+                    } else ++it;
+                }
+                passed = students;
+                auto s4 = clock_type::now();
+                split_ms = ms(s3,s4);
             }
-            auto s3 = clock_type::now();
+
+            auto w1 = clock_type::now();
+            std::string pref = (strategy==1)
+                ? "students_result_deque_s1"
+                : "students_result_deque_s2";
 
             writeStudentsToFiles(
                 std::vector<Student>(passed.begin(), passed.end()),
                 std::vector<Student>(failed.begin(), failed.end()),
-                "students_result_deque"
+                pref
             );
-            auto s4 = clock_type::now();
+            auto w2 = clock_type::now();
 
-            sort_ms  = ms(s1, s2);
-            split_ms = ms(s2, s3);
-            write_ms = ms(s3, s4);
-
-            std::cout << "\n[Using std::deque]\n";
+            sort_ms = ms(s1,s2);
+            write_ms = ms(w1,w2);
         }
 
+        // =====================================================================
+        // Performance results
+        // =====================================================================
         std::cout << "\n--- Performance (ms) ---\n";
         std::cout << "Read:   " << read_ms << "\n";
         std::cout << "Sort:   " << sort_ms << "\n";
@@ -155,21 +266,12 @@ int main() {
         std::cout << "Write:  " << write_ms << "\n";
         std::cout << "TOTAL:  " << (read_ms + sort_ms + split_ms + write_ms) << "\n";
 
-        std::cout << "\nOutput files (by container):\n"
-                     " - students_result_vector_passed.txt / _failed.txt\n"
-                     " - students_result_list_passed.txt   / _failed.txt\n"
-                     " - students_result_deque_passed.txt  / _failed.txt\n";
-
-        std::cout << "Press Enter to exit...";
+        std::cout << "\nPress Enter to exit...";
         std::cin.ignore();
         std::cin.get();
 
     } catch (...) {
         processException();
-        std::cout << "Press Enter to exit...";
-        std::cin.ignore();
-        std::cin.get();
         return 1;
     }
-    return 0;
 }
