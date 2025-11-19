@@ -132,6 +132,31 @@ cmake –build <br>
 - Strategy 2 is more memory efficient but may be slower on large datasets.
 
 ---
+# 📊 Performance Comparison (Measured Results)
+
+The performance of the program was tested on datasets of different sizes (1k, 10k, 100k, 1000k students).  
+The following table summarizes the approximate execution times for each container and strategy:
+
+| Container | Strategy | Read Time | Sort Time | Split Time | Write Time |
+|----------|----------|-----------|-----------|-------------|-------------|
+| **vector** | S1 | Fast | Fast | Medium | Fast |
+| **vector** | S2 | Fast | Fast | **Very Fast** | Fast |
+| **list** | S1 | Medium | **Slow** | Medium | Medium |
+| **list** | S2 | Medium | Slow | Fast | Medium |
+| **deque** | S1 | Fast | Medium | Medium | Fast |
+| **deque** | S2 | Fast | Medium | Fast | Fast |
+
+
+## ✔ Conclusions
+- **Vector** is the fastest container overall because of contiguous memory layout.  
+- **Strategy 1** is simpler but uses more memory because it creates two new containers.  
+- **Strategy 2** is **more memory-efficient** because it removes failed students in-place.  
+- **List** is significantly slower for sorting because list sorting requires element-by-element traversal.  
+- **Deque** performs close to vector, but sometimes slower in sorting.  
+
+Overall, the optimal combination is:  
+👉 **vector + strategy 2** (best balance between speed and memory efficiency)
+
 
 ## 👩‍💻 Author
 Ikram Outaik  
