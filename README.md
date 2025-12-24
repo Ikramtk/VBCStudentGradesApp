@@ -69,7 +69,7 @@ Changes included:
 
 ## 🚀 Usage Guide
 
-### **1. Generate test files (optional)**
+### **1. Generate test files **
 
 Run program :
 Enter 1 → Test files will be generated (students1000.txt, students10000.txt, …)
@@ -112,7 +112,7 @@ students_result_list_s2_failed.txt<br>
 
 ## 🛠 Build Instructions
 
-### **Using Makefile (Linux/Mac)**
+### **Using Makefile **
 
 make
 ./VBCStudentGradesApp
