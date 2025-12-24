@@ -71,7 +71,9 @@ Changes included:
 
 ### **1. Generate test files (optional)**
 
-Run program → Enter 1 → Files are generated
+Run program :
+Enter 1 → Test files will be generated (students1000.txt, students10000.txt, …)
+Enter 0 → Skip file generation and continue to dataset selection
 
 ### **2. Choose dataset**
 
